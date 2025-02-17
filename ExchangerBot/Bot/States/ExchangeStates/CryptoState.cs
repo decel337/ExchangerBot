@@ -1,4 +1,6 @@
-﻿using Telegram.Bot;
+﻿using ExchangerBot.Bot.Models;
+using ExchangerBot.Bot.States.ExchangeStates.CryptoStates;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -16,6 +18,10 @@ internal class CryptoState : IBotState
             [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
         ]);
 
-        await bot.EditMessageText(chatId, messageId, "Введите количество USDT для обмена:", replyMarkup: buttons);
+        Order order = new();
+        stateManager.SetOrder(chatId, order);
+
+        await bot.EditMessageText(chatId, messageId, $"{order}\nВведите количество USDT для обмена:", replyMarkup: buttons);
+        stateManager.SetState(chatId, new EnterAmountUsdtState());
     }
 }

@@ -29,6 +29,7 @@ internal class MainMenuState : IBotState
         //    await bot.DeleteMessage(chatId, messageId - 1);
         //}
         //catch{ }
-        await bot.SendMessage(chatId, "👋 Привет! Выберите действие:", replyMarkup: buttons);
+        Message responseMessage = await bot.SendMessage(chatId, "👋 Привет! Выберите действие:", replyMarkup: buttons);
+        stateManager.SetGeneralMessageId(responseMessage.Id);
     }
 }

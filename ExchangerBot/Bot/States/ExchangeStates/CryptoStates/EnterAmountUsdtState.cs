@@ -1,37 +1,41 @@
-﻿using Telegram.Bot;
+﻿using ExchangerBot.Bot.Models;
+using System.Xml.Linq;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ExchangerBot.Bot.States.ExchangeStates.CryptoStates;
-internal class EnterAmountUsdtState : IBotState
+internal class EnterAmountUsdtState : IFormBotState
 {
     public async Task Handle(ITelegramBotClient bot, Message message, StateManager stateManager)
     {
         long chatId = message.Chat.Id;
         int messageId = message.MessageId;
+        await bot.DeleteMessage(chatId, messageId);
 
-        var buttons = new InlineKeyboardMarkup(
+        List<List<InlineKeyboardButton>> buttons = 
             [
                 [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
-            ]);
+            ];
 
-        if (!decimal.TryParse(message.Text, out decimal amount) || amount <= 0)
+        Order order = stateManager.GetOrder(chatId);
+
+        if (!int.TryParse(message.Text, out int amount) || amount <= 0)
         {
-            await bot.EditMessageText(chatId, messageId, "Ошибка: введите корректное число.", replyMarkup: buttons);
+            await bot.EditMessageText(chatId, stateManager.GeneralMessageId, $"{order}\nОшибка: введите корректное число.", replyMarkup: new InlineKeyboardMarkup(buttons));
             return;
         }
 
-        stateManager.SetUserData(message.Chat.Id, "USDTAmount", amount);
+        order.UsdtAmount = amount;
 
-        var buttons = new InlineKeyboardMarkup(new[]
-        {
-            new[] { InlineKeyboardButton.WithCallbackData("USD", "currency_usd") },
-            new[] { InlineKeyboardButton.WithCallbackData("EUR", "currency_eur") },
-            new[] { InlineKeyboardButton.WithCallbackData("RUB", "currency_rub") }
-        });
+        stateManager.SetOrder(chatId, order);
 
-        await bot.SendTextMessageAsync(message.Chat.Id, "Выберите валюту для получения наличных:", replyMarkup: buttons);
+        foreach (string name in Enum.GetNames(typeof(Currency)))
+            if (name != "Unknown")
+                buttons.Add([InlineKeyboardButton.WithCallbackData(name, $"select_currency:{name}")]);
 
-        stateManager.SetState(message.Chat.Id, new SelectCurrencyState());
+        await bot.EditMessageText(chatId, stateManager.GeneralMessageId, $"{order}\nВыберите валюту для получения наличных:", replyMarkup: new InlineKeyboardMarkup(buttons));
+
+        //stateManager.SetState(chatId, new SelectCurrencyState());
     }
 }

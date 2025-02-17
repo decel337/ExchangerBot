@@ -2,9 +2,9 @@
 
 internal class Order
 {
-    public static int UsdtAmount = 0;
-    public static Currency Currency = Currency.Unknown;
-    public static PaymentMethod Method = PaymentMethod.Unknown;
+    public int UsdtAmount = 0;
+    public Currency Currency = Currency.Unknown;
+    public PaymentMethod Method = PaymentMethod.Unknown;
 
     public override string ToString()
     {
