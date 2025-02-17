@@ -5,5 +5,6 @@ internal enum TakeCurrency
     RU,
     UAH,
     USD,
-    EUR
+    EUR,
+    Unknown
 }

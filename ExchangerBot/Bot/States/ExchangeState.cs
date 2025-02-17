@@ -14,7 +14,7 @@ internal class ExchangeState : IBotState
         var buttons = new InlineKeyboardMarkup(
         [
             [InlineKeyboardButton.WithCallbackData("🔄 Криптовалюта", "crypto")],
-            [InlineKeyboardButton.WithCallbackData("🔄 Безналичные за наличные", "beznal_on_nal")],
+            [InlineKeyboardButton.WithCallbackData("🔄 Безналичные за наличные", "beznalcash")],
             [InlineKeyboardButton.WithCallbackData("🔄 Наличный обмен", "only_nal")],
             [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
         ]);

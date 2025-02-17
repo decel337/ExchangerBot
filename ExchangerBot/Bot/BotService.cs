@@ -5,6 +5,7 @@ using Telegram.Bot;
 using ExchangerBot.Bot.States.ExchangeStates;
 using ExchangerBot.Bot.States.ExchangeStates.CryptoStates;
 using ExchangerBot.Bot.Models;
+using ExchangerBot.Bot.States.ExchangeStates.BeznalCashStates;
 
 namespace ExchangerBot.Bot;
 
@@ -84,7 +85,7 @@ internal class BotService
                 _stateManager.SetState(query.Message.Chat.Id, new CryptoState());
                 break;
             //Selected currency CRYPTO
-            case string currency when currency.StartsWith("select_currency"):
+            case string currency when currency.StartsWith("select_currency:"):
                 Models.Order order = _stateManager.GetOrder(query.Message.Chat.Id);
                 _ = Enum.TryParse(currency.Split(':')[1], out Currency currentCurrency);
                 order.Currency = currentCurrency;
@@ -92,7 +93,7 @@ internal class BotService
                 _stateManager.SetState(query.Message.Chat.Id, new SelectPaymentState());
                 break;
             //Selected currency CRYPTO
-            case string payment when payment.StartsWith("select_payment"):
+            case string payment when payment.StartsWith("select_payment:"):
                 order = _stateManager.GetOrder(query.Message.Chat.Id);
                 _ = Enum.TryParse(payment.Split(':')[1], out PaymentMethod currentPayment);
                 order.Method = currentPayment;
@@ -102,6 +103,20 @@ internal class BotService
             //Exhange
             case "beznalcash":
                 _stateManager.SetState(query.Message.Chat.Id, new BeznalCashState());
+                break;
+            case string currency when currency.StartsWith("select_take_currency:"):
+                Order1 order1 = _stateManager.GetOrder1(query.Message.Chat.Id);
+                _ = Enum.TryParse(currency.Split(':')[1], out TakeCurrency currentTakeCurrency);
+                order1.TakeCurrency = currentTakeCurrency;
+                _stateManager.SetOrder(query.Message.Chat.Id, order1);
+                _stateManager.SetState(query.Message.Chat.Id, new PlatformEnterAmountState());
+                break;
+            case string currency when currency.StartsWith("select_currency1:"):
+                order1 = _stateManager.GetOrder1(query.Message.Chat.Id);
+                _ = Enum.TryParse(currency.Split(':')[1], out currentCurrency);
+                order1.Currency = currentCurrency;
+                _stateManager.SetOrder(query.Message.Chat.Id, order1);
+                _stateManager.SetState(query.Message.Chat.Id, new PlatformEnterBankingState());
                 break;
         }
 
