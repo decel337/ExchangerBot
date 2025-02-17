@@ -8,6 +8,7 @@ internal class StateManager
     private readonly Dictionary<long, IBotState> _userStates = [];
     private readonly Dictionary<long, Order> _usersOrder = [];
     private readonly Dictionary<long, Order1> _usersOrder1 = [];
+    private readonly Dictionary<long, Order2> _usersOrder2 = [];
     public int GeneralMessageId { get; private set; }
     public void SetState(long chatId, IBotState state)
     {
@@ -28,7 +29,10 @@ internal class StateManager
     {
         _usersOrder1[chatId] = state;
     }
-
+    public void SetOrder(long chatId, Order2 state)
+    {
+        _usersOrder2[chatId] = state;
+    }
     public Order GetOrder(long chatId)
     {
         return _usersOrder.TryGetValue(chatId, out Order? value) ? value : throw new ArgumentNullException($"Order not found in {chatId}");
@@ -37,6 +41,11 @@ internal class StateManager
     public Order1 GetOrder1(long chatId)
     {
         return _usersOrder1.TryGetValue(chatId, out Order1? value) ? value : throw new ArgumentNullException($"Order not found in {chatId}");
+    }
+
+    public Order2 GetOrder2(long chatId)
+    {
+        return _usersOrder2.TryGetValue(chatId, out Order2? value) ? value : throw new ArgumentNullException($"Order not found in {chatId}");
     }
 
     public void SetGeneralMessageId(int messageId)

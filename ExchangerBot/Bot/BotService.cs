@@ -80,7 +80,7 @@ internal class BotService
             case "back":
                 _stateManager.SetState(query.Message.Chat.Id, new MainMenuState());
                 break;
-            //Exhange
+            //Exhange crypto
             case "crypto":
                 _stateManager.SetState(query.Message.Chat.Id, new CryptoState());
                 break;
@@ -100,7 +100,7 @@ internal class BotService
                 _stateManager.SetOrder(query.Message.Chat.Id, order);
                 _stateManager.SetState(query.Message.Chat.Id, new ConfirmationState());
                 break;
-            //Exhange
+            //Exhange Beznal on cash
             case "beznalcash":
                 _stateManager.SetState(query.Message.Chat.Id, new BeznalCashState());
                 break;
@@ -117,6 +117,24 @@ internal class BotService
                 order1.Currency = currentCurrency;
                 _stateManager.SetOrder(query.Message.Chat.Id, order1);
                 _stateManager.SetState(query.Message.Chat.Id, new PlatformEnterBankingState());
+                break;
+            //Exchange cash on cash
+            case "cash":
+                _stateManager.SetState(query.Message.Chat.Id, new CashState());
+                break;
+            case string currency when currency.StartsWith("select_take_currency1:"):
+                Order2 order2 = _stateManager.GetOrder2(query.Message.Chat.Id);
+                _ = Enum.TryParse(currency.Split(':')[1], out currentTakeCurrency);
+                order2.TakeCurrency = currentTakeCurrency;
+                _stateManager.SetOrder(query.Message.Chat.Id, order2);
+                _stateManager.SetState(query.Message.Chat.Id, new States.ExchangeStates.CashStates.PlatformEnterAmountState());
+                break;
+            case string currency when currency.StartsWith("select_currency2:"):
+                order2 = _stateManager.GetOrder2(query.Message.Chat.Id);
+                _ = Enum.TryParse(currency.Split(':')[1], out currentCurrency);
+                order2.Currency = currentCurrency;
+                _stateManager.SetOrder(query.Message.Chat.Id, order2);
+                _stateManager.SetState(query.Message.Chat.Id, new States.ExchangeStates.CashStates.ConfirmationState());
                 break;
         }
 

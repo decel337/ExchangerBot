@@ -23,7 +23,7 @@ internal class Order //for crypto
     }
 }
 
-internal class Order1 //for crypto
+internal class Order1 //for beznal
 {
     public int Amount = 0;
     public TakeCurrency TakeCurrency = TakeCurrency.Unknown;
@@ -33,5 +33,17 @@ internal class Order1 //for crypto
     public override string ToString()
     {
         return $"Ваш заказ:\nВалюта, которую отдаете: {TakeCurrency}\nКоличество: {Amount}\nПолучаемая валюта: {Currency}\nНазвание банка: {NameOfBank}";
+    }
+}
+
+internal class Order2 //for nal
+{
+    public int Amount = 0;
+    public TakeCurrency TakeCurrency = TakeCurrency.Unknown;
+    public Currency Currency = Currency.Unknown;
+
+    public override string ToString()
+    {
+        return $"Ваш заказ:\nВалюта, которую отдаете: {TakeCurrency}\nКоличество: {Amount}\nПолучаемая валюта: {Currency}";
     }
 }
