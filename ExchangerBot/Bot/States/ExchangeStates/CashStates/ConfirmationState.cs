@@ -14,12 +14,12 @@ internal class ConfirmationState : IBotState
 
         List<List<InlineKeyboardButton>> buttons =
             [
-                [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")],
-                [InlineKeyboardButton.WithCallbackData("✅ Confirm", "back")]
+                [InlineKeyboardButton.WithCallbackData("✅ Confirm", "confirm2")],
+                [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
             ];
 
         Order2 order = stateManager.GetOrder2(chatId);
 
-        await bot.EditMessageText(chatId, stateManager.GeneralMessageId, $"{order}", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}", replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

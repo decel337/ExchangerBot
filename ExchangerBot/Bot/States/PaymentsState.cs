@@ -19,6 +19,6 @@ internal class PaymentsState : IBotState
             [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
         ]);
 
-        await bot.EditMessageText(chatId, messageId, "💰 Оплата счетов:\nВыберите метод оплаты:", replyMarkup: buttons);
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), "💰 Оплата счетов:\nВыберите метод оплаты:", replyMarkup: buttons);
     }
 }

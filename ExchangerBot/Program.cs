@@ -1,4 +1,6 @@
 ﻿using ExchangerBot.Bot;
+using ExchangerBot.Bot.Database;
+using ExchangerBot.Bot.Database.Repositories;
 using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
 
@@ -6,9 +8,15 @@ IConfigurationRoot config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: true)
     .Build();
 
+DatabaseInitializer.Initialize();
+
 string token = config["BotConfig:Token"] ?? throw new UnauthorizedAccessException("Bot token not found.");
 TelegramBotClient botClient = new(token);
-var botService = new BotService(botClient);
+
+var dbContext = new AppDbContext();
+var userRepository = new UserRepository(dbContext);
+var userService = new UserService(userRepository, botClient);
+var botService = new BotService(botClient, userService);
 
 botClient.StartReceiving(async (bot, update, token) =>
 {

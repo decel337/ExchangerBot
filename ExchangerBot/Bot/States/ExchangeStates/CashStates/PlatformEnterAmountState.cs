@@ -20,7 +20,7 @@ internal class PlatformEnterAmountState : IBotState
 
         Order2 order = stateManager.GetOrder2(chatId);
 
-        await bot.EditMessageText(chatId, messageId, $"{order}\nВведите количество {order.TakeCurrency} для обмена:", replyMarkup: buttons);
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Введите количество {order.TakeCurrency} для обмена:", replyMarkup: buttons);
         stateManager.SetState(chatId, new EnterAmountState());
     }
 }

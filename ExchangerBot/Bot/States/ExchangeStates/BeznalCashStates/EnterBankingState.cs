@@ -15,8 +15,8 @@ internal class EnterBankingState : IFormBotState
 
         List<List<InlineKeyboardButton>> buttons =
             [
-                [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")],
-                [InlineKeyboardButton.WithCallbackData("✅ Confirm", "back")]
+                [InlineKeyboardButton.WithCallbackData("✅ Confirm", "confirm1")],
+                [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
             ];
 
         Order1 order = stateManager.GetOrder1(chatId);
@@ -26,6 +26,6 @@ internal class EnterBankingState : IFormBotState
 
         stateManager.SetOrder(chatId, order);
 
-        await bot.EditMessageText(chatId, stateManager.GeneralMessageId, $"{order}", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}", replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

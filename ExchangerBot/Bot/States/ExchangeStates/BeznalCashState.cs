@@ -13,6 +13,7 @@ internal class BeznalCashState : IBotState
         int messageId = message.MessageId;
 
         Order1 order = new();
+        order.From = message.Chat.Username!; //PAO problem with username
         stateManager.SetOrder(chatId, order);
 
         List<List<InlineKeyboardButton>> buttons =
@@ -22,8 +23,8 @@ internal class BeznalCashState : IBotState
 
         foreach (string name in Enum.GetNames(typeof(TakeCurrency)))
             if (name != "Unknown")
-                buttons.Add([InlineKeyboardButton.WithCallbackData(name, $"select_take_currency:{name}")]);
+                buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"💵 {name}", $"select_take_currency:{name}")]);
 
-        await bot.EditMessageText(chatId, stateManager.GeneralMessageId, $"{order}\nВыберите валюту, которую отдаете", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Выберите валюту, которую отдаете", replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

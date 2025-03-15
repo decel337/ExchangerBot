@@ -19,9 +19,10 @@ internal class CryptoState : IBotState
         ]);
 
         Order order = new();
+        order.From = message.Chat.Username!;
         stateManager.SetOrder(chatId, order);
 
-        await bot.EditMessageText(chatId, messageId, $"{order}\nВведите количество USDT для обмена:", replyMarkup: buttons);
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Введите количество USDT для обмена:", replyMarkup: buttons);
         stateManager.SetState(chatId, new EnterAmountUsdtState());
     }
 }

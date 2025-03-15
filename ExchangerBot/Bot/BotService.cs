@@ -12,12 +12,14 @@ namespace ExchangerBot.Bot;
 internal class BotService
 {
     private readonly ITelegramBotClient _botClient;
+    private readonly UserService _userService;
     private readonly StateManager _stateManager;
     private readonly MessageManager _messageManager;
 
-    public BotService(ITelegramBotClient botClient)
+    public BotService(ITelegramBotClient botClient, UserService userService)
     {
         _botClient = botClient;
+        _userService = userService;
         _stateManager = new StateManager();
         _messageManager = new MessageManager();
     }
@@ -135,6 +137,28 @@ internal class BotService
                 order2.Currency = currentCurrency;
                 _stateManager.SetOrder(query.Message.Chat.Id, order2);
                 _stateManager.SetState(query.Message.Chat.Id, new States.ExchangeStates.CashStates.ConfirmationState());
+                break;
+            case string confirm when confirm.StartsWith("confirm"):
+                string keyword = "confirm";
+
+                int index = confirm.IndexOf(keyword);
+                string result = string.Empty;
+                if (index != -1)
+                    result = confirm[(index + keyword.Length)..];
+
+                switch (result)
+                {
+                    case "":
+                        await _userService.NotifyManagersAsync(_stateManager.GetOrder(query.Message.Chat.Id).ToString());
+                        break;
+                    case "1":
+                        await _userService.NotifyManagersAsync(_stateManager.GetOrder1(query.Message.Chat.Id).ToString());
+                        break;
+                    case "2":
+                        await _userService.NotifyManagersAsync(_stateManager.GetOrder2(query.Message.Chat.Id).ToString());
+                        break;
+                }
+                _stateManager.SetState(query.Message.Chat.Id, new MainMenuState());
                 break;
         }
 

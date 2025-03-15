@@ -22,7 +22,7 @@ internal class EnterAmountUsdtState : IFormBotState
 
         if (!int.TryParse(message.Text, out int amount) || amount <= 0)
         {
-            await bot.EditMessageText(chatId, stateManager.GeneralMessageId, $"{order}\nОшибка: введите корректное число.", replyMarkup: new InlineKeyboardMarkup(buttons));
+            await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n🛑 Ошибка: введите корректное число.", replyMarkup: new InlineKeyboardMarkup(buttons));
             return;
         }
 
@@ -32,9 +32,9 @@ internal class EnterAmountUsdtState : IFormBotState
 
         foreach (string name in Enum.GetNames(typeof(Currency)))
             if (name != "Unknown")
-                buttons.Add([InlineKeyboardButton.WithCallbackData(name, $"select_currency:{name}")]);
+                buttons.Add([InlineKeyboardButton.WithCallbackData($"💵 {name}", $"select_currency:{name}")]);
 
-        await bot.EditMessageText(chatId, stateManager.GeneralMessageId, $"{order}\nВыберите валюту для получения наличных:", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Выберите валюту для получения наличных:", replyMarkup: new InlineKeyboardMarkup(buttons));
 
         //stateManager.SetState(chatId, new SelectCurrencyState());
     }

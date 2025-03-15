@@ -19,6 +19,6 @@ internal class ExchangeState : IBotState
             [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
         ]);
 
-        await bot.EditMessageText(chatId, messageId, "💱 Обмен валюты:\nВыберите действие:", replyMarkup: buttons);
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), "💱 Варианты обмена валют:", replyMarkup: buttons);
     }
 }

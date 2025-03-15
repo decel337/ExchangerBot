@@ -6,10 +6,10 @@ namespace ExchangerBot.Bot;
 internal class StateManager
 {
     private readonly Dictionary<long, IBotState> _userStates = [];
+    private readonly Dictionary<long, int> _generalMessages = [];
     private readonly Dictionary<long, Order> _usersOrder = [];
     private readonly Dictionary<long, Order1> _usersOrder1 = [];
     private readonly Dictionary<long, Order2> _usersOrder2 = [];
-    public int GeneralMessageId { get; private set; }
     public void SetState(long chatId, IBotState state)
     {
         _userStates[chatId] = state;
@@ -48,8 +48,13 @@ internal class StateManager
         return _usersOrder2.TryGetValue(chatId, out Order2? value) ? value : throw new ArgumentNullException($"Order not found in {chatId}");
     }
 
-    public void SetGeneralMessageId(int messageId)
+    public void SetGeneralMessageId(long chatId, int messageId)
     {
-        GeneralMessageId = messageId;
+        _generalMessages[chatId] = messageId;
+    }
+
+    public int GetGeneralMessageId(long chatId)
+    {
+        return _generalMessages[chatId];
     }
 }

@@ -20,7 +20,7 @@ internal class MainMenuState : IBotState
 
         if (message.From is not null && message.From.IsBot)
         {
-            await bot.EditMessageText(chatId, messageId, "👋 Привет! Выберите действие:", replyMarkup: buttons);
+            await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"👋 Привет, {message?.Chat?.FirstName}! Выберите действие:", replyMarkup: buttons);
             return;
         }
         //await bot.DeleteMessage(chatId, messageId);
@@ -29,7 +29,7 @@ internal class MainMenuState : IBotState
         //    await bot.DeleteMessage(chatId, messageId - 1);
         //}
         //catch{ }
-        Message responseMessage = await bot.SendMessage(chatId, "👋 Привет! Выберите действие:", replyMarkup: buttons);
-        stateManager.SetGeneralMessageId(responseMessage.Id);
+        Message responseMessage = await bot.SendMessage(chatId, $"👋 Привет, {message?.From?.FirstName}! Выберите действие:", replyMarkup: buttons);
+        stateManager.SetGeneralMessageId(chatId, responseMessage.Id);
     }
 }

@@ -19,7 +19,7 @@ internal class PlatformEnterBankingState : IBotState
 
         Order1 order = stateManager.GetOrder1(chatId);
 
-        await bot.EditMessageText(chatId, messageId, $"{order}\nВведите банк, на котором деньги:", replyMarkup: buttons);
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n🏧 Введите банк, на котором деньги:", replyMarkup: buttons);
         stateManager.SetState(chatId, new EnterBankingState());
     }
 }
