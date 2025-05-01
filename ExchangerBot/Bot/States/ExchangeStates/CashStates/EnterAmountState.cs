@@ -18,7 +18,7 @@ internal class EnterAmountState : IFormBotState
                 [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
             ];
 
-        Order2 order = stateManager.GetOrder2(chatId);
+        IOrder order = stateManager.GetOrder(chatId);
 
         if (!int.TryParse(message.Text, out int amount) || amount <= 0)
         {
@@ -31,8 +31,12 @@ internal class EnterAmountState : IFormBotState
         stateManager.SetOrder(chatId, order);
 
         foreach (string name in Enum.GetNames(typeof(Currency)))
-            if (name != "Unknown")
-                buttons.Add([InlineKeyboardButton.WithCallbackData($"💵 {name}", $"select_currency2:{name}")]);
+        {
+            if (name == "Unknown") 
+                continue;
+
+            buttons.Add([InlineKeyboardButton.WithCallbackData($"💵 {name}", $"select_currency2:{name}")]);
+        }
 
         await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Выберите валюту для получения наличных:", replyMarkup: new InlineKeyboardMarkup(buttons));
     }

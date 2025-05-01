@@ -18,7 +18,9 @@ internal class ConfirmationState : IBotState
                 [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
             ];
 
-        Order order = stateManager.GetOrder(chatId);
+        IOrder order = stateManager.GetOrder(chatId);
+        order.MayCalc = true;
+        stateManager.SetOrder(chatId, order);
 
         await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}", replyMarkup: new InlineKeyboardMarkup(buttons));
 

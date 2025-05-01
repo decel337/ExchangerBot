@@ -11,7 +11,7 @@ internal class SelectPaymentState : IFormBotState
     {
         long chatId = message.Chat.Id;
         int messageId = message.MessageId;
-        Order order = stateManager.GetOrder(chatId);
+        IOrder order = stateManager.GetOrder(chatId);
 
         List<List<InlineKeyboardButton>> buttons =
             [

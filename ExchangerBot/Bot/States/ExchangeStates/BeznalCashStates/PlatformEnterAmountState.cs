@@ -18,7 +18,7 @@ internal class PlatformEnterAmountState : IFormBotState
             [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
         ]);
 
-        Order1 order = stateManager.GetOrder1(chatId);
+        IOrder order = stateManager.GetOrder(chatId);
 
         await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Введите количество {order.TakeCurrency} для обмена:", replyMarkup: buttons);
         stateManager.SetState(chatId, new EnterAmountState());

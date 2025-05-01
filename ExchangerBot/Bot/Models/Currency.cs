@@ -1,5 +1,5 @@
 ﻿namespace ExchangerBot.Bot.Models;
-internal enum Currency
+public enum Currency
 {
     USD,
     EUR,

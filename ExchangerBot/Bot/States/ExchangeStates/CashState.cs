@@ -12,8 +12,8 @@ internal class CashState : IBotState
         long chatId = message.Chat.Id;
         int messageId = message.MessageId;
 
-        Order2 order = new();
-        order.From = message.Chat.Username!;
+        OrderForNal order = new(stateManager.CountOfOrder);
+        order.From = message.Chat.Username ?? "guest";
         stateManager.SetOrder(chatId, order);
 
         List<List<InlineKeyboardButton>> buttons =
@@ -22,8 +22,12 @@ internal class CashState : IBotState
             ];
 
         foreach (string name in Enum.GetNames(typeof(TakeCurrency)))
-            if (name != "Unknown")
-                buttons.Add([InlineKeyboardButton.WithCallbackData($"💵 {name}", $"select_take_currency1:{name}")]);
+        {
+            if (name == "Unknown" || name == "UAH" || name == "RUB" || name == "USDT") //add excluded currency
+                continue;
+
+            buttons.Add([InlineKeyboardButton.WithCallbackData($"💵 {name}", $"select_take_currency1:{name}")]);
+        }
 
         await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Выберите валюту, которую отдаете", replyMarkup: new InlineKeyboardMarkup(buttons));
     }

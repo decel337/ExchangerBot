@@ -1,10 +1,11 @@
 ﻿namespace ExchangerBot.Bot.Models;
 
-internal enum TakeCurrency
+public enum TakeCurrency
 {
-    RU,
+    RUB,
     UAH,
     USD,
+    USDT,
     EUR,
     Unknown
 }

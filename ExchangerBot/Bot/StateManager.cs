@@ -7,9 +7,10 @@ internal class StateManager
 {
     private readonly Dictionary<long, IBotState> _userStates = [];
     private readonly Dictionary<long, int> _generalMessages = [];
-    private readonly Dictionary<long, Order> _usersOrder = [];
-    private readonly Dictionary<long, Order1> _usersOrder1 = [];
-    private readonly Dictionary<long, Order2> _usersOrder2 = [];
+    private readonly Dictionary<long, IOrder> _usersOrder = [];
+    private int _countOfOrder = int.Parse(File.ReadAllText("count.txt"));
+    private static readonly object fileLock = new();
+    public int CountOfOrder => _countOfOrder;
     public void SetState(long chatId, IBotState state)
     {
         _userStates[chatId] = state;
@@ -20,32 +21,19 @@ internal class StateManager
         return _userStates.TryGetValue(chatId, out IBotState? value) ? value : new MainMenuState();
     }
 
-    public void SetOrder(long chatId, Order state)
+    public void SetOrder(long chatId, IOrder state)
     {
         _usersOrder[chatId] = state;
     }
 
-    public void SetOrder(long chatId, Order1 state)
+    public IOrder GetOrder(long chatId)
     {
-        _usersOrder1[chatId] = state;
-    }
-    public void SetOrder(long chatId, Order2 state)
-    {
-        _usersOrder2[chatId] = state;
-    }
-    public Order GetOrder(long chatId)
-    {
-        return _usersOrder.TryGetValue(chatId, out Order? value) ? value : throw new ArgumentNullException($"Order not found in {chatId}");
+        return _usersOrder.TryGetValue(chatId, out IOrder? value) ? value : throw new ArgumentNullException($"Order not found in {chatId}");
     }
 
-    public Order1 GetOrder1(long chatId)
+    public void RemoveOrder(long chatId)
     {
-        return _usersOrder1.TryGetValue(chatId, out Order1? value) ? value : throw new ArgumentNullException($"Order not found in {chatId}");
-    }
-
-    public Order2 GetOrder2(long chatId)
-    {
-        return _usersOrder2.TryGetValue(chatId, out Order2? value) ? value : throw new ArgumentNullException($"Order not found in {chatId}");
+        _usersOrder.Remove(chatId);
     }
 
     public void SetGeneralMessageId(long chatId, int messageId)
@@ -56,5 +44,21 @@ internal class StateManager
     public int GetGeneralMessageId(long chatId)
     {
         return _generalMessages[chatId];
+    }
+
+    public void IncrementCountOfOrder()
+    {
+        try
+        {
+            lock (fileLock)
+            {
+                _countOfOrder++;
+                File.WriteAllText("count.txt", _countOfOrder.ToString());
+            }
+        }
+        catch
+        {
+            Console.WriteLine("PROBLEM WITH FILE COUNT!!!");
+        }
     }
 }

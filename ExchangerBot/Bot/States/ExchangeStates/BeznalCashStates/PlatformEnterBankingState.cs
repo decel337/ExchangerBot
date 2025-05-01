@@ -17,7 +17,7 @@ internal class PlatformEnterBankingState : IBotState
             [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
         ]);
 
-        Order1 order = stateManager.GetOrder1(chatId);
+        IOrder order = stateManager.GetOrder(chatId);
 
         await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n🏧 Введите банк, на котором деньги:", replyMarkup: buttons);
         stateManager.SetState(chatId, new EnterBankingState());

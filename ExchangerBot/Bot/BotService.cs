@@ -6,6 +6,7 @@ using ExchangerBot.Bot.States.ExchangeStates;
 using ExchangerBot.Bot.States.ExchangeStates.CryptoStates;
 using ExchangerBot.Bot.Models;
 using ExchangerBot.Bot.States.ExchangeStates.BeznalCashStates;
+using ExchangerBot.Bot.States.ManagerStates;
 
 namespace ExchangerBot.Bot;
 
@@ -15,13 +16,15 @@ internal class BotService
     private readonly UserService _userService;
     private readonly StateManager _stateManager;
     private readonly MessageManager _messageManager;
+    private readonly OrderService.OrderService _orderService;
 
-    public BotService(ITelegramBotClient botClient, UserService userService)
+    public BotService(ITelegramBotClient botClient, UserService userService, OrderService.OrderService orderService)
     {
         _botClient = botClient;
         _userService = userService;
         _stateManager = new StateManager();
         _messageManager = new MessageManager();
+        _orderService = orderService;
     }
 
     public async Task HandleUpdate(Update update)
@@ -42,7 +45,14 @@ internal class BotService
         MainMenuState mainMenu = new();
         await mainMenu.Handle(_botClient, message, _stateManager);
         _stateManager.SetState(message.Chat.Id, mainMenu);
-        _messageManager.AddSentMessage(message.Chat.Id, message.Id);
+
+        await _userService.AddUser(new Database.Models.User() //Save users, who used bot
+        {
+            Id = message.Chat.Id,
+            Name = message.Chat.Username
+        });
+        //_messageManager.AddSentMessage(message.Chat.Id, message.Id); maybe for clear all messages in chat
+
     }
 
     private async Task HandleTextMessage(Message message)
@@ -88,7 +98,7 @@ internal class BotService
                 break;
             //Selected currency CRYPTO
             case string currency when currency.StartsWith("select_currency:"):
-                Models.Order order = _stateManager.GetOrder(query.Message.Chat.Id);
+                IOrder order = _stateManager.GetOrder(query.Message.Chat.Id);
                 _ = Enum.TryParse(currency.Split(':')[1], out Currency currentCurrency);
                 order.Currency = currentCurrency;
                 _stateManager.SetOrder(query.Message.Chat.Id, order);
@@ -107,14 +117,14 @@ internal class BotService
                 _stateManager.SetState(query.Message.Chat.Id, new BeznalCashState());
                 break;
             case string currency when currency.StartsWith("select_take_currency:"):
-                Order1 order1 = _stateManager.GetOrder1(query.Message.Chat.Id);
+                IOrder order1 = _stateManager.GetOrder(query.Message.Chat.Id);
                 _ = Enum.TryParse(currency.Split(':')[1], out TakeCurrency currentTakeCurrency);
                 order1.TakeCurrency = currentTakeCurrency;
                 _stateManager.SetOrder(query.Message.Chat.Id, order1);
                 _stateManager.SetState(query.Message.Chat.Id, new PlatformEnterAmountState());
                 break;
-            case string currency when currency.StartsWith("select_currency1:"):
-                order1 = _stateManager.GetOrder1(query.Message.Chat.Id);
+            case string currency when currency.StartsWith("select_currency1:"): //simplify merge Orders
+                order1 = _stateManager.GetOrder(query.Message.Chat.Id);
                 _ = Enum.TryParse(currency.Split(':')[1], out currentCurrency);
                 order1.Currency = currentCurrency;
                 _stateManager.SetOrder(query.Message.Chat.Id, order1);
@@ -125,40 +135,45 @@ internal class BotService
                 _stateManager.SetState(query.Message.Chat.Id, new CashState());
                 break;
             case string currency when currency.StartsWith("select_take_currency1:"):
-                Order2 order2 = _stateManager.GetOrder2(query.Message.Chat.Id);
+                IOrder order2 = _stateManager.GetOrder(query.Message.Chat.Id);
                 _ = Enum.TryParse(currency.Split(':')[1], out currentTakeCurrency);
                 order2.TakeCurrency = currentTakeCurrency;
                 _stateManager.SetOrder(query.Message.Chat.Id, order2);
                 _stateManager.SetState(query.Message.Chat.Id, new States.ExchangeStates.CashStates.PlatformEnterAmountState());
                 break;
-            case string currency when currency.StartsWith("select_currency2:"):
-                order2 = _stateManager.GetOrder2(query.Message.Chat.Id);
+            case string currency when currency.StartsWith("select_currency2:"): //simplify merge Orders
+                order2 = _stateManager.GetOrder(query.Message.Chat.Id);
                 _ = Enum.TryParse(currency.Split(':')[1], out currentCurrency);
                 order2.Currency = currentCurrency;
                 _stateManager.SetOrder(query.Message.Chat.Id, order2);
                 _stateManager.SetState(query.Message.Chat.Id, new States.ExchangeStates.CashStates.ConfirmationState());
                 break;
             case string confirm when confirm.StartsWith("confirm"):
-                string keyword = "confirm";
-
-                int index = confirm.IndexOf(keyword);
-                string result = string.Empty;
-                if (index != -1)
-                    result = confirm[(index + keyword.Length)..];
-
-                switch (result)
-                {
-                    case "":
-                        await _userService.NotifyManagersAsync(_stateManager.GetOrder(query.Message.Chat.Id).ToString());
-                        break;
-                    case "1":
-                        await _userService.NotifyManagersAsync(_stateManager.GetOrder1(query.Message.Chat.Id).ToString());
-                        break;
-                    case "2":
-                        await _userService.NotifyManagersAsync(_stateManager.GetOrder2(query.Message.Chat.Id).ToString());
-                        break;
-                }
+                IOrder confirmedOrder = _stateManager.GetOrder(query.Message.Chat.Id);
+                confirmedOrder.IsConfirmed = true;
+                _stateManager.SetOrder(query.Message.Chat.Id, confirmedOrder);
+                await _userService.NotifyManagersAsync(confirmedOrder.ToString()!, query.Message.Chat.Id);
                 _stateManager.SetState(query.Message.Chat.Id, new MainMenuState());
+                break;
+
+            //Handle for manager callback
+            case string operation when operation.StartsWith("edit_"):
+                string orderId = operation.Split('_')[1];
+                await _botClient.EditMessageText(query.Message.Chat.Id, query.Message.Id, query.Message.Text + "\n\nВведите новую сумму для получения: ");
+                //await _botClient.SendMessage(query.Message.Chat.Id, $"✍ Введите новую сумму получения {orderId}:");
+                _stateManager.SetState(query.Message.Chat.Id, new EditingSumOfPaymentState(long.Parse(orderId), _userService));
+                break;
+            case string operation when operation.StartsWith("send_"):
+                orderId = operation.Split('_')[1];
+                _stateManager.IncrementCountOfOrder();
+                _orderService.WriteOrder(_stateManager.GetOrder(long.Parse(orderId)));
+                _stateManager.RemoveOrder(long.Parse(orderId));
+                await _botClient.DeleteMessage(query.Message.Chat.Id, query.Message.Id);
+                break;
+            case string operation when operation.StartsWith("cancel_"):
+                orderId = operation.Split('_')[1];
+                _stateManager.RemoveOrder(long.Parse(orderId));
+                await _botClient.DeleteMessage(query.Message.Chat.Id, query.Message.Id);
                 break;
         }
 

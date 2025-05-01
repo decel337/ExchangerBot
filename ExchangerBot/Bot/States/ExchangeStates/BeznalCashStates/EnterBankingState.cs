@@ -19,11 +19,11 @@ internal class EnterBankingState : IFormBotState
                 [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
             ];
 
-        Order1 order = stateManager.GetOrder1(chatId);
+        IOrder order = stateManager.GetOrder(chatId);
 
         if(message.Text is not null)
             order.NameOfBank = message.Text;
-
+        order.MayCalc = true;
         stateManager.SetOrder(chatId, order);
 
         await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}", replyMarkup: new InlineKeyboardMarkup(buttons));

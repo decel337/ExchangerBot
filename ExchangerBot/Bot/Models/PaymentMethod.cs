@@ -1,6 +1,6 @@
 ﻿namespace ExchangerBot.Bot.Models;
 
-internal enum PaymentMethod
+public enum PaymentMethod
 {
     Cash,
     BankCard,

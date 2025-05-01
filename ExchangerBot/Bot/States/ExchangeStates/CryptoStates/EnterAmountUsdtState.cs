@@ -18,7 +18,7 @@ internal class EnterAmountUsdtState : IFormBotState
                 [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
             ];
 
-        Order order = stateManager.GetOrder(chatId);
+        IOrder order = stateManager.GetOrder(chatId);
 
         if (!int.TryParse(message.Text, out int amount) || amount <= 0)
         {
@@ -26,7 +26,7 @@ internal class EnterAmountUsdtState : IFormBotState
             return;
         }
 
-        order.UsdtAmount = amount;
+        order.Amount = amount;
 
         stateManager.SetOrder(chatId, order);
 

@@ -11,9 +11,24 @@ internal class MainMenuState : IBotState
         long chatId = message.Chat.Id;
         int messageId = message.MessageId;
 
+        string messageExchange = "🔄 Обмен";
+
+        try
+        {
+
+            Models.IOrder order = stateManager.GetOrder(chatId);
+            if (order.IsConfirmed)
+                messageExchange = "🧾 Ваш заказ";
+        }
+        catch (ArgumentNullException)
+        {
+
+        }
+
+
         var buttons = new InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton.WithCallbackData("🔄 Обмен", "exchange")],
+            [InlineKeyboardButton.WithCallbackData(messageExchange, "exchange")],
             [InlineKeyboardButton.WithCallbackData("💳 Оплата счетов", "payments")],
             [InlineKeyboardButton.WithCallbackData("📈 Узнать курс", "rates")]
         ]);

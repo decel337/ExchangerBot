@@ -18,8 +18,8 @@ internal class CryptoState : IBotState
             [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
         ]);
 
-        Order order = new();
-        order.From = message.Chat.Username!;
+        OrderCrypto order = new(stateManager.CountOfOrder);
+        order.From = message.Chat.Username ?? "guest";
         stateManager.SetOrder(chatId, order);
 
         await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Введите количество USDT для обмена:", replyMarkup: buttons);

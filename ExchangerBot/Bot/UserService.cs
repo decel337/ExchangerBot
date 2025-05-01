@@ -1,6 +1,7 @@
 ﻿using ExchangerBot.Bot.Database.Models;
 using ExchangerBot.Bot.Database.Repositories;
 using Telegram.Bot;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ExchangerBot.Bot;
 
@@ -8,6 +9,11 @@ internal class UserService(IUserRepository userRepository, ITelegramBotClient bo
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly ITelegramBotClient _botClient = botClient;
+
+    public async Task AddUser(User user)
+    {
+        await _userRepository.AddUserAsync(user);
+    }
 
     public async Task AssignManagerAsync(long userId)
     {
@@ -19,12 +25,27 @@ internal class UserService(IUserRepository userRepository, ITelegramBotClient bo
         return await _userRepository.GetUsersByRoleAsync(Role.Manager);
     }
 
-    public async Task NotifyManagersAsync(string message)
+    public async Task NotifyManagersAsync(string message, long orderId)
     {
         List<User> managers = await GetManagersAsync();
         foreach (User manager in managers)
         {
-            await _botClient.SendMessage(manager.Id, message);
+            InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton.WithCallbackData("✏ Change sum", $"edit_{orderId}"),
+                ],
+                [
+                    InlineKeyboardButton.WithCallbackData("✅ Confirm", $"send_{orderId}")
+                ],
+                [
+                    InlineKeyboardButton.WithCallbackData("❌ Cancel", $"cancel_{orderId}")
+                ]
+            ]);
+
+            await _botClient.SendMessage(manager.Id, message, replyMarkup: inlineKeyboard);
         }
+
+        //PAO maybe relocate to another method (for example notify user)
     }
 }

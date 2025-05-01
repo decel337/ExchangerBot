@@ -1,6 +1,8 @@
 ﻿using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types;
 using Telegram.Bot;
+using ExchangerBot.Bot.Models;
+using System.Globalization;
 
 namespace ExchangerBot.Bot.States;
 
@@ -11,14 +13,43 @@ internal class RatesState : IBotState
         long chatId = message.Chat.Id;
         int messageId = message.MessageId;
 
-        var buttons = new InlineKeyboardMarkup(
-        [
-            [InlineKeyboardButton.WithCallbackData("💲 USD", "rate_usd")],
-            [InlineKeyboardButton.WithCallbackData("💶 EUR", "rate_eur")],
-            [InlineKeyboardButton.WithCallbackData("₿ BTC", "rate_btc")],
-            [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
-        ]);
+        if (Program.GlobalOrderService is null)
+            return;
 
-        await bot.EditMessageText(chatId, messageId, "📊 Курсы валют:\nВыберите валюту:", replyMarkup: buttons);
+        List<List<string?>> rates = await Program.GlobalOrderService.GetAllRates();
+
+        var buttons = new InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
+            ]);
+
+        string messageForUser = "Курс может меняться и зависеть от суммы. Всю информацию можно уточнить у менджера @ABCexchangebali\n\n";
+        foreach (string take in Enum.GetNames(typeof(TakeCurrency)))
+        {
+            if (take == "Unknown")
+                continue;
+            messageForUser += $"💱 Курсы обмена из {take}:\n\n";
+
+            foreach (string value in Enum.GetNames(typeof(Currency)))
+            {
+                if (value == "Unknown")
+                    continue;
+
+                string? rate = rates.ToList().FirstOrDefault(x => x[0] == take && x[1] == value)?[2];
+                if (rate != null)
+                {
+                    messageForUser += $"• 1000 {take} = {Math.Round(double.Parse(rate, NumberStyles.Any, new CultureInfo("ru-RU")) * 1000, 2)} {value}\n";
+                }
+                else
+                {
+                    messageForUser += $"• Нет данных для {take} → {value}\n";
+                }
+            }
+
+            messageForUser += "\n\n";
+
+        }
+
+        await bot.EditMessageText(chatId, messageId, messageForUser, replyMarkup: buttons);
     }
 }
