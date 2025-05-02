@@ -36,6 +36,7 @@ internal class ExchangeState : IBotState
             [InlineKeyboardButton.WithCallbackData("🔄 Криптовалюта", "crypto")],
             [InlineKeyboardButton.WithCallbackData("🔄 Наличные за безналичные", "beznalcash")],
             [InlineKeyboardButton.WithCallbackData("🔄 Наличный обмен", "cash")],
+            [InlineKeyboardButton.WithCallbackData("🔄 Наличные через банкомат", "atm")],
             [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
         ]);
 

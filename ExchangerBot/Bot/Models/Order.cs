@@ -61,7 +61,7 @@ internal class OrderForBeznal(int numberOfOrder) : IOrder //for beznal
     public int Amount { get; set; } = 0;
     public TakeCurrency TakeCurrency { get; set; } = TakeCurrency.Unknown;
     public Currency Currency { get; set; } = Currency.Unknown;
-    public PaymentMethod Method { get; set; } = PaymentMethod.BankCard;
+    public PaymentMethod Method { get; set; } = PaymentMethod.Cash;
     public string NameOfBank { get; set; } = "Unknown";
     public string From { get; set; } = string.Empty;
     public double SumOfPayment { get; set; }
@@ -87,6 +87,31 @@ internal class OrderForNal(int numberOfOrder) : IOrder //for nal
     public TakeCurrency TakeCurrency { get; set; } = TakeCurrency.Unknown;
     public Currency Currency { get; set; } = Currency.Unknown;
     public PaymentMethod Method { get; set; } = PaymentMethod.Cash;
+    public string NameOfBank { get; set; } = "Unknown";
+    public string From { get; set; } = string.Empty;
+    public double SumOfPayment { get; set; }
+    public bool IsConfirmed { get; set; } = false;
+    public bool MayCalc { get; set; } = false;
+    public double Rate { get; set; }
+    public double RateToUsd { get; set; }
+
+    public override string ToString()
+    {
+        if (MayCalc && SumOfPayment == 0)
+            SumOfPayment = Tools.CalculateSumOfPayment(this);
+
+        return $"Ваш заказ #{NumberOfOrder:D7}:\nВалюта, которую отдаете: {TakeCurrency}\nКоличество: {Amount}\nПолучаемая валюта: {Currency}\nКлиент: @{From}" +
+            $"{(MayCalc ? $"\n\nПолучаете: {SumOfPayment:N0} {Currency}" : string.Empty)}";
+    }
+}
+
+internal class OrderForATM(int numberOfOrder) : IOrder //for nal
+{
+    public int NumberOfOrder { get; init; } = numberOfOrder;
+    public int Amount { get; set; } = 0;
+    public TakeCurrency TakeCurrency { get; set; } = TakeCurrency.Unknown;
+    public Currency Currency { get; set; } = Currency.IDR;
+    public PaymentMethod Method { get; set; } = PaymentMethod.ATM;
     public string NameOfBank { get; set; } = "Unknown";
     public string From { get; set; } = string.Empty;
     public double SumOfPayment { get; set; }
@@ -150,6 +175,26 @@ internal static class Tools
 
         interpolatedSum -= commission;
 
-        return Math.Round(interpolatedSum * rateToInterpolate);
+        double finalSum = Math.Round(interpolatedSum * rateToInterpolate);
+
+        if (order.Currency == Currency.IDR && order.Method == PaymentMethod.ATM)
+            finalSum = RoundToNearestLargeUnit(finalSum);
+        else if (order.Currency == Currency.IDR)
+            finalSum = RoundToNearestLargeUnit(finalSum, false);
+        else
+            finalSum = finalSum % 10 <= 5 ? finalSum - finalSum % 10 : finalSum + (10 - finalSum % 10);
+
+            return Math.Round(finalSum);
+    }
+
+    public static double RoundToNearestLargeUnit(double amount, bool to100k = true)
+    {
+        int unit = to100k ? 100_000 : 50_000;
+        double remainder = amount % unit;
+
+        if (remainder <= unit / 2)
+            return amount - remainder;
+        else
+            return amount + (unit - remainder);
     }
 }

@@ -4,5 +4,7 @@ public enum Currency
     USD,
     EUR,
     IDR,
+    THB,
+    AUD,
     Unknown
 }

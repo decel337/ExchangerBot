@@ -1,8 +1,14 @@
-﻿using Telegram.Bot.Types.ReplyMarkups;
+﻿using ExchangerBot.Bot.Models;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types;
 using Telegram.Bot;
-using ExchangerBot.Bot.Models;
-using System.Globalization;
+using System.Xml.Linq;
 
 namespace ExchangerBot.Bot.States;
 
@@ -18,38 +24,18 @@ internal class RatesState : IBotState
 
         List<List<string?>> rates = await Program.GlobalOrderService.GetAllRates();
 
-        var buttons = new InlineKeyboardMarkup(
+
+        List<List<InlineKeyboardButton>> buttons =
             [
                 [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
-            ]);
+            ];
 
-        string messageForUser = "Курс может меняться и зависеть от суммы. Всю информацию можно уточнить у менджера @ABCexchangebali\n\n";
-        foreach (string take in Enum.GetNames(typeof(TakeCurrency)))
-        {
-            if (take == "Unknown")
-                continue;
-            messageForUser += $"💱 Курсы обмена из {take}:\n\n";
+        foreach (string name in Enum.GetNames(typeof(TakeCurrency)))
+            if (name != "Unknown")
+                buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"💵 {name}", $"rates_{name}")]);
 
-            foreach (string value in Enum.GetNames(typeof(Currency)))
-            {
-                if (value == "Unknown")
-                    continue;
+        buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"💵 Все", $"rates_all")]);
 
-                string? rate = rates.ToList().FirstOrDefault(x => x[0] == take && x[1] == value)?[2];
-                if (rate != null)
-                {
-                    messageForUser += $"• 1000 {take} = {Math.Round(double.Parse(rate, NumberStyles.Any, new CultureInfo("ru-RU")) * 1000, 2)} {value}\n";
-                }
-                else
-                {
-                    messageForUser += $"• Нет данных для {take} → {value}\n";
-                }
-            }
-
-            messageForUser += "\n\n";
-
-        }
-
-        await bot.EditMessageText(chatId, messageId, messageForUser, replyMarkup: buttons);
+        await bot.EditMessageText(chatId, messageId, "Выберите, что хотели бы обменять или посмотрите все доступные курсы.", replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

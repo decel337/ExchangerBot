@@ -7,5 +7,8 @@ public enum TakeCurrency
     USD,
     USDT,
     EUR,
+    IDR,
+    THB,
+    AUD,
     Unknown
 }

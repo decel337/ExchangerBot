@@ -117,7 +117,7 @@ public class OrderService
             string monthlyIncomeFormula = $"=SUM(P2:P)";
 
             if (closestPreviousSheet != null)
-                monthlyIncomeFormula = $"='{closestPreviousSheet}'!Q15 + SUM(P2:P)";
+                monthlyIncomeFormula = $"='{closestPreviousSheet}'!T15 + SUM(P2:P)";
 
 
 
@@ -126,8 +126,8 @@ public class OrderService
                 new List<object>
                 {
                     "=COUNTA(A2:A)",
-                    monthlyIncomeFormula,
-                    $"=SUM(P2:P)"
+                    $"=SUM(P2:P)",
+                    monthlyIncomeFormula
                 }
             };
 

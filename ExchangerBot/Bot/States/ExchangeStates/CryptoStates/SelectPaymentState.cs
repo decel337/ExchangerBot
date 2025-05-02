@@ -20,7 +20,7 @@ internal class SelectPaymentState : IFormBotState
 
         foreach (string name in Enum.GetNames(typeof(PaymentMethod)))
             if (name != "Unknown")
-                buttons.Add([InlineKeyboardButton.WithCallbackData($"💳 {name}", $"select_payment:{name}")]);
+                buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"💳 {name}", $"select_payment:{name}")]);
 
         await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💳 Выберите способ получения денег:", replyMarkup: new InlineKeyboardMarkup(buttons));
     }

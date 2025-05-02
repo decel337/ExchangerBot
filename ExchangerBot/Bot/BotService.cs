@@ -89,6 +89,14 @@ internal class BotService
             case "rates":
                 _stateManager.SetState(query.Message.Chat.Id, new RatesState());
                 break;
+            case string rate when rate.StartsWith("rates_"):
+                string selector = rate.Split('_')[1];
+                if (selector == "all")
+                    _stateManager.SetState(query.Message.Chat.Id, new RatesSelectorState());
+                else
+                    _stateManager.SetState(query.Message.Chat.Id, new RatesSelectorState(Enum.Parse<TakeCurrency>(selector)));
+
+                break;
             case "back":
                 _stateManager.SetState(query.Message.Chat.Id, new MainMenuState());
                 break;
@@ -154,6 +162,18 @@ internal class BotService
                 _stateManager.SetOrder(query.Message.Chat.Id, confirmedOrder);
                 await _userService.NotifyManagersAsync(confirmedOrder.ToString()!, query.Message.Chat.Id);
                 _stateManager.SetState(query.Message.Chat.Id, new MainMenuState());
+                break;
+
+            //FOR ATM
+            case "atm":
+                _stateManager.SetState(query.Message.Chat.Id, new AtmState());
+                break;
+            case string currency when currency.StartsWith("select_take_currency2:"):
+                IOrder order3 = _stateManager.GetOrder(query.Message.Chat.Id);
+                _ = Enum.TryParse(currency.Split(':')[1], out currentTakeCurrency);
+                order3.TakeCurrency = currentTakeCurrency;
+                _stateManager.SetOrder(query.Message.Chat.Id, order3);
+                _stateManager.SetState(query.Message.Chat.Id, new States.ExchangeStates.AtmStates.PlatformEnterAmountState());
                 break;
 
             //Handle for manager callback
