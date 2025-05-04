@@ -28,6 +28,8 @@ public interface IOrder
     public double RateToUsd { get; set; }
     public bool IsConfirmed { get; set; }
     public bool MayCalc { get; set; }
+    public string? Manager { get; set; }
+
 }
 
 internal class OrderCrypto(int numberOfOrder) : IOrder
@@ -44,6 +46,7 @@ internal class OrderCrypto(int numberOfOrder) : IOrder
     public bool MayCalc { get; set; } = false;
     public double Rate { get; set; }
     public double RateToUsd { get; set; }
+    public string? Manager { get; set; } 
 
     public override string ToString()
     {
@@ -69,6 +72,7 @@ internal class OrderForBeznal(int numberOfOrder) : IOrder //for beznal
     public bool MayCalc { get; set; } = false;
     public double Rate { get; set; }
     public double RateToUsd { get; set; }
+    public string? Manager { get; set; }
 
     public override string ToString()
     {
@@ -94,6 +98,7 @@ internal class OrderForNal(int numberOfOrder) : IOrder //for nal
     public bool MayCalc { get; set; } = false;
     public double Rate { get; set; }
     public double RateToUsd { get; set; }
+    public string? Manager { get; set; }
 
     public override string ToString()
     {
@@ -119,7 +124,7 @@ internal class OrderForATM(int numberOfOrder) : IOrder //for nal
     public bool MayCalc { get; set; } = false;
     public double Rate { get; set; }
     public double RateToUsd { get; set; }
-
+    public string? Manager { get; set; }
     public override string ToString()
     {
         if (MayCalc && SumOfPayment == 0)
@@ -184,7 +189,7 @@ internal static class Tools
         else
             finalSum = finalSum % 10 <= 5 ? finalSum - finalSum % 10 : finalSum + (10 - finalSum % 10);
 
-            return Math.Round(finalSum);
+        return Math.Round(finalSum);
     }
 
     public static double RoundToNearestLargeUnit(double amount, bool to100k = true)

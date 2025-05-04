@@ -21,7 +21,7 @@ internal class ExchangeState : IBotState
                          [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
                     ]);
 
-                await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"Обмен недоступен, ваш ордер в обработке. Дождитесь сообщения от менеджера! \n\n{order}", replyMarkup: buttons1);
+                await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"Обмен недоступен, ваш ордер в обработке. Дождитесь сообщения от менеджера @ABCexchangebali \n\n{order}", replyMarkup: buttons1);
                 return;
             }
         }

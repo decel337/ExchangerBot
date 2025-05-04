@@ -7,6 +7,7 @@ using ExchangerBot.Bot.States.ExchangeStates.CryptoStates;
 using ExchangerBot.Bot.Models;
 using ExchangerBot.Bot.States.ExchangeStates.BeznalCashStates;
 using ExchangerBot.Bot.States.ManagerStates;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ExchangerBot.Bot;
 
@@ -177,9 +178,13 @@ internal class BotService
                 break;
 
             //Handle for manager callback
-            case string operation when operation.StartsWith("edit_"):
+            case string operation when operation.StartsWith("take_"):
                 string orderId = operation.Split('_')[1];
-                await _botClient.EditMessageText(query.Message.Chat.Id, query.Message.Id, query.Message.Text + "\n\nВведите новую сумму для получения: ");
+                _stateManager.SetState(query.Message.Chat.Id, new ConfirmedOrderState(long.Parse(orderId), _userService));
+                break;
+            case string operation when operation.StartsWith("edit_"):
+                orderId = operation.Split('_')[1];
+                await _botClient.EditMessageText(query.Message.Chat.Id, query.Message.Id, query.Message.Text + "\n\n<b>✍ Введите новую сумму для получения ⬇️: </b>", parseMode: ParseMode.Html);
                 //await _botClient.SendMessage(query.Message.Chat.Id, $"✍ Введите новую сумму получения {orderId}:");
                 _stateManager.SetState(query.Message.Chat.Id, new EditingSumOfPaymentState(long.Parse(orderId), _userService));
                 break;

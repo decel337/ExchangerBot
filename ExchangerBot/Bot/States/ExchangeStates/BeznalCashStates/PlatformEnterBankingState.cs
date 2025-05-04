@@ -1,6 +1,7 @@
 ﻿using ExchangerBot.Bot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ExchangerBot.Bot.States.ExchangeStates.BeznalCashStates;
@@ -19,7 +20,7 @@ internal class PlatformEnterBankingState : IBotState
 
         IOrder order = stateManager.GetOrder(chatId);
 
-        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n🏧 Введите банк, на котором деньги:", replyMarkup: buttons);
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n🏧 <b>Введите банк, на котором деньги ⬇️:</b>", replyMarkup: buttons, parseMode: ParseMode.Html);
         stateManager.SetState(chatId, new EnterBankingState());
     }
 }

@@ -28,15 +28,13 @@ internal class UserService(IUserRepository userRepository, ITelegramBotClient bo
     public async Task NotifyManagersAsync(string message, long orderId)
     {
         List<User> managers = await GetManagersAsync();
+
         foreach (User manager in managers)
         {
             InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton.WithCallbackData("✏ Change sum", $"edit_{orderId}"),
-                ],
-                [
-                    InlineKeyboardButton.WithCallbackData("✅ Confirm", $"send_{orderId}")
+                    InlineKeyboardButton.WithCallbackData("✅ Take", $"take_{orderId}")
                 ],
                 [
                     InlineKeyboardButton.WithCallbackData("❌ Cancel", $"cancel_{orderId}")
@@ -45,6 +43,24 @@ internal class UserService(IUserRepository userRepository, ITelegramBotClient bo
 
             await _botClient.SendMessage(manager.Id, message, replyMarkup: inlineKeyboard);
         }
+
+        //foreach (User manager in managers)
+        //{
+        //    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
+        //    [
+        //        [
+        //            InlineKeyboardButton.WithCallbackData("✏ Change sum", $"edit_{orderId}"),
+        //        ],
+        //        [
+        //            InlineKeyboardButton.WithCallbackData("✅ Confirm", $"send_{orderId}")
+        //        ],
+        //        [
+        //            InlineKeyboardButton.WithCallbackData("❌ Cancel", $"cancel_{orderId}")
+        //        ]
+        //    ]);
+
+        //    await _botClient.SendMessage(manager.Id, message, replyMarkup: inlineKeyboard);
+        //}
 
         //PAO maybe relocate to another method (for example notify user)
     }

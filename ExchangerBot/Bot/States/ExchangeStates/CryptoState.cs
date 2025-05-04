@@ -2,6 +2,7 @@
 using ExchangerBot.Bot.States.ExchangeStates.CryptoStates;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ExchangerBot.Bot.States.ExchangeStates;
@@ -22,7 +23,7 @@ internal class CryptoState : IBotState
         order.From = message.Chat.Username ?? "guest";
         stateManager.SetOrder(chatId, order);
 
-        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Введите количество USDT для обмена:", replyMarkup: buttons);
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 <b>Введите количество USDT для обмена ⬇️: </b>", replyMarkup: buttons, parseMode: ParseMode.Html);
         stateManager.SetState(chatId, new EnterAmountUsdtState());
     }
 }

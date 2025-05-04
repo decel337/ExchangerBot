@@ -9,8 +9,8 @@ public static class DatabaseInitializer
         using AppDbContext context = new();
         context.Database.EnsureCreated();
 
-        context.Users.RemoveRange(context.Users);
-        context.SaveChanges();
+        //context.Users.RemoveRange(context.Users);
+        //context.SaveChanges();
 
         if (!context.Users.Any(u=>u.Role == Role.Manager))
         {

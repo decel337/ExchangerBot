@@ -32,9 +32,21 @@ internal class EditingSumOfPaymentState : IFormBotState
 
         order.SumOfPayment = amount;
         stateManager.SetOrder(_orderId, order);
-        await bot.DeleteMessage(chatId, messageId);
-        await _userService.NotifyManagersAsync(stateManager.GetOrder(_orderId).ToString()!, _orderId);
-        await bot.SendMessage(_orderId, "Сумма вашего ордера была изменена, обратите внимание!");
+        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
+[
+    [
+                            InlineKeyboardButton.WithCallbackData("✏ Change sum", $"edit_{_orderId}"),
+                        ],
+                        [
+                            InlineKeyboardButton.WithCallbackData("✅ Confirm", $"send_{_orderId}")
+                        ],
+                        [
+                            InlineKeyboardButton.WithCallbackData("❌ Cancel", $"cancel_{_orderId}")
+                        ]
+]);
+        await bot.SendMessage(chatId, order.ToString()!, replyMarkup: inlineKeyboard);
+        //await _userService.NotifyManagersAsync(stateManager.GetOrder(_orderId).ToString()!, _orderId);
+        await bot.SendMessage(_orderId, "Сумма вашего ордера была изменена, обратите внимание!\nАктуальную сумму смотрите в меню <Ваш заказ>"); //PAO user notify
 
     }
 }

@@ -2,6 +2,7 @@
 using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types;
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
 
 namespace ExchangerBot.Bot.States.ExchangeStates.AtmStates;
 
@@ -19,7 +20,7 @@ internal class PlatformEnterAmountState : IFormBotState
 
         IOrder order = stateManager.GetOrder(chatId);
 
-        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Введите количество {order.TakeCurrency} для обмена:", replyMarkup: buttons);
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 <b>Введите количество {order.TakeCurrency} для обмена ⬇️: </b>", replyMarkup: buttons, parseMode: ParseMode.Html);
         stateManager.SetState(chatId, new EnterAmountState());
     }
 }
