@@ -18,10 +18,10 @@ internal class ExchangeState : IBotState
             {
                 var buttons1 = new InlineKeyboardMarkup( //duplicate from main menu state
                     [
-                         [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
+                         [InlineKeyboardButton.WithCallbackData("⬅️ Главное меню", "back")]
                     ]);
 
-                await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"Обмен недоступен, ваш ордер в обработке. Дождитесь сообщения от менеджера @ABCexchangebali \n\n{order}", replyMarkup: buttons1);
+                await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"Дождитесь сообщения от менеджера @ABCexchangebali \n\n{order}", replyMarkup: buttons1);
                 return;
             }
         }
@@ -33,15 +33,15 @@ internal class ExchangeState : IBotState
 
         var buttons = new InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton.WithCallbackData("🔄 Криптовалюта", "crypto")],
-            [InlineKeyboardButton.WithCallbackData("🔄 Наличные за безналичные", "beznalcash")],
-            [InlineKeyboardButton.WithCallbackData("🔄 Наличный обмен", "cash")],
-            [InlineKeyboardButton.WithCallbackData("🔄 Наличные через банкомат", "atm")],
+            [InlineKeyboardButton.WithCallbackData("🪙 Криптовалюта (USDT)", "crypto")],
+            [InlineKeyboardButton.WithCallbackData("💳 Безналичные", "beznalcash")],
+            [InlineKeyboardButton.WithCallbackData("🤝 Обмен из рук в руки", "cash")],
+            [InlineKeyboardButton.WithCallbackData("🏧 Выдача наличных через банкомат", "atm")],
             [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
         ]);
 
 
 
-        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), "💱 Варианты обмена валют:", replyMarkup: buttons);
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), "💼 Способы обмена валют:\r\nВыберите подходящий формат — мы адаптируемся под ваши предпочтения \U0001f91d", replyMarkup: buttons);
     }
 }

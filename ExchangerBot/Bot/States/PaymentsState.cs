@@ -16,7 +16,8 @@ internal class PaymentsState : IBotState
             [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
         ]);
 
-        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), "💰 Оплата счетов:\nДанный раздел в разработке, обратитесь к менеджеру @ABCexchangebali", replyMarkup: buttons);
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), "💳 <b>Оплата счетов</b>\r\n\r\n⚠️ Этот раздел временно в разработке — но вы не останетесь без помощи!\r\n\r\n📞 Свяжитесь с менеджером прямо сейчас:\r\n👉 <a href=\"https://t.me/ABCexchangebali\">@ABCexchangebali</a> — он подскажет и поможет 💬",
+            parseMode: Telegram.Bot.Types.Enums.ParseMode.Html, replyMarkup: buttons);
 
         //long chatId = message.Chat.Id;
         //int messageId = message.MessageId;

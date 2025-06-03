@@ -1,4 +1,5 @@
 ﻿using ExchangerBot.Bot.Models;
+using ExchangerBot.Bot.Resources;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -26,9 +27,10 @@ internal class CashState : IBotState
             if (name == "Unknown" || name == "UAH" || name == "USDT" || name == "THB") //add excluded currency
                 continue;
 
-            buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"💵 {name}", $"select_take_currency1:{name}")]);
+            buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"{SmileDictionary.CurrencyFlags[name]} {name}", $"select_take_currency1:{name}")]);
         }
 
-        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Выберите валюту, которую отдаете", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 <b>Выберите валюту, которую отдаете </b>",
+            parseMode: Telegram.Bot.Types.Enums.ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

@@ -90,6 +90,15 @@ internal class BotService
             case "rates":
                 _stateManager.SetState(query.Message.Chat.Id, new RatesState());
                 break;
+            case "about":
+                _stateManager.SetState(query.Message.Chat.Id, new AboutUsState());
+                break;
+            case "reviews":
+                _stateManager.SetState(query.Message.Chat.Id, new ReviewsState());
+                break;
+            case "cooperations":
+                _stateManager.SetState(query.Message.Chat.Id, new CooperationState());
+                break;
             case string rate when rate.StartsWith("rates_"):
                 string selector = rate.Split('_')[1];
                 if (selector == "all")
@@ -193,12 +202,15 @@ internal class BotService
                 _stateManager.IncrementCountOfOrder();
                 _orderService.WriteOrder(_stateManager.GetOrder(long.Parse(orderId)));
                 _stateManager.RemoveOrder(long.Parse(orderId));
+                await _botClient.SendMessage(orderId, "Урааа, ваш заказ завершен успешно! <b>Обмен снова доступен</b>\n/start", parseMode: ParseMode.Html);
                 await _botClient.DeleteMessage(query.Message.Chat.Id, query.Message.Id);
+                _stateManager.SetState(query.Message.Chat.Id, new DefaultOrderState()); //Maybe relocate to new state
+                //PAO выделить все оповещения юзера в отдельный метод!!
                 break;
             case string operation when operation.StartsWith("cancel_"):
                 orderId = operation.Split('_')[1];
                 _stateManager.RemoveOrder(long.Parse(orderId));
-                await _botClient.DeleteMessage(query.Message.Chat.Id, query.Message.Id);
+                _stateManager.SetState(query.Message.Chat.Id, new CanceledOrderState(long.Parse(orderId), _userService));
                 break;
         }
 

@@ -22,7 +22,13 @@ internal class ConfirmedOrderState : IFormBotState
     }
     public async Task Handle(ITelegramBotClient bot, Message message, StateManager stateManager)
     {
-        await bot.SendMessage(_orderId, "Менеджер принялся за ваш заказ! Ожидайте сообщений для уточнения!"); //PAO выделить все оповещения юзера в отдельный метод!!
+        ReplyParameters replyParameters = new()
+        {
+            MessageId = stateManager.GetGeneralMessageId(_orderId),
+            AllowSendingWithoutReply = true
+        };
+        await bot.SendMessage(_orderId, "<b>Менеджер принялся за ваш заказ! Ожидайте сообщений для уточнения</b>\nАктуальную сумму смотрите в меню — <b>Ваш заказ</b>",
+            parseMode: Telegram.Bot.Types.Enums.ParseMode.Html, replyParameters: replyParameters); //PAO выделить все оповещения юзера в отдельный метод!!
 
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
         [

@@ -25,6 +25,8 @@ internal class SelectPaymentState : IFormBotState
             buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"💳 {name}", $"select_payment:{name}")]);
         }
 
-        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💳 Выберите способ получения денег:", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💳 <b>Выберите способ получения денег: </b>", 
+            parseMode: Telegram.Bot.Types.Enums.ParseMode.Html, 
+            replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

@@ -1,8 +1,11 @@
-﻿using Telegram.Bot.Types.ReplyMarkups;
-using Telegram.Bot.Types;
-using Telegram.Bot;
-using ExchangerBot.Bot.Models;
+﻿using ExchangerBot.Bot.Models;
+using ExchangerBot.Bot.Resources;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.Globalization;
+using System.Xml.Linq;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ExchangerBot.Bot.States;
 
@@ -39,21 +42,21 @@ internal class RatesSelectorState(TakeCurrency? currency = null) : IBotState
             if (take == "Unknown")
                 continue;
 
-            messageForUser += $"💱 Курсы обмена из {take}:\n\n";
+            messageForUser += $"💱 Курсы обмена из {take} {SmileDictionary.CurrencyFlags[take]}:\n\n";
 
             foreach (string value in Enum.GetNames(typeof(Currency)))
             {
-                if (value == "Unknown")
+                if (value == "Unknown" || value == take)
                     continue;
 
                 string? rate = rates.ToList().FirstOrDefault(x => x[0] == take && x[1] == value)?[2];
                 if (rate != null)
                 {
-                    messageForUser += $"• 1000 {take} = {Math.Round(double.Parse(rate, NumberStyles.Any, new CultureInfo("ru-RU")) * 1000, 2).ToString("N2", customFormat)} {value}\n";
+                    messageForUser += $"• 1000 {take} {SmileDictionary.CurrencyFlags[take]} = {Math.Round(double.Parse(rate, NumberStyles.Any, new CultureInfo("ru-RU")) * 1000 * 0.97, 2).ToString("N2", customFormat)} {value} {SmileDictionary.CurrencyFlags[value]}\n";
                 }
                 else
                 {
-                    messageForUser += $"• Нет данных для {take} → {value}\n";
+                    messageForUser += $"• Нет данных для {take} {SmileDictionary.CurrencyFlags[take]} → {value} {SmileDictionary.CurrencyFlags[value]}\n";
                 }
             }
 

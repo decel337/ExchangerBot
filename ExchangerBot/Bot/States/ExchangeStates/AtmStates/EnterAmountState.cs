@@ -15,7 +15,7 @@ internal class EnterAmountState : IFormBotState
 
         List<List<InlineKeyboardButton>> buttons =
             [
-                [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
+                [InlineKeyboardButton.WithCallbackData("⬅️ Главное меню", "back")]
             ];
 
         IOrder order = stateManager.GetOrder(chatId);
@@ -34,7 +34,7 @@ internal class EnterAmountState : IFormBotState
         buttons =
             [
                 [InlineKeyboardButton.WithCallbackData("✅ Confirm", "confirm")],
-                [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
+                [InlineKeyboardButton.WithCallbackData("⬅️ Главное меню", "back")]
             ];
 
         order = stateManager.GetOrder(chatId);

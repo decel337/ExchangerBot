@@ -46,7 +46,20 @@ internal class EditingSumOfPaymentState : IFormBotState
 ]);
         await bot.SendMessage(chatId, order.ToString()!, replyMarkup: inlineKeyboard);
         //await _userService.NotifyManagersAsync(stateManager.GetOrder(_orderId).ToString()!, _orderId);
-        await bot.SendMessage(_orderId, "Сумма вашего ордера была изменена, обратите внимание!\nАктуальную сумму смотрите в меню <Ваш заказ>"); //PAO user notify
+        //        await bot.SendTextMessageAsync(
+        //    chatId: _orderId,
+        //    text: "‼️ Сумма вашего ордера была изменена!",
+        //    replyToMessageId: orderMessage.MessageId,
+        //    replyMarkup: keyboard
+        //);
+
+        ReplyParameters replyParameters = new()
+        {
+            MessageId = stateManager.GetGeneralMessageId(_orderId),
+            AllowSendingWithoutReply = true
+        };
+        await bot.SendMessage(_orderId, "<b>Сумма вашего ордера была изменена, обратите внимание!</b>\nАктуальную сумму смотрите в меню — <b>Ваш заказ</b>",
+            parseMode: Telegram.Bot.Types.Enums.ParseMode.Html, replyParameters: replyParameters); //PAO user notify
 
     }
 }

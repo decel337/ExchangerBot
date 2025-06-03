@@ -1,4 +1,5 @@
 ﻿using ExchangerBot.Bot.Models;
+using ExchangerBot.Bot.Resources;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -32,8 +33,9 @@ internal class EnterAmountState : IFormBotState
 
         foreach (string name in Enum.GetNames(typeof(Currency)))
             if (name != "Unknown")
-                buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"💵 {name}", $"select_currency1:{name}")]);
+                buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"{SmileDictionary.CurrencyFlags[name]} {name}", $"select_currency1:{name}")]);
 
-        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 Выберите валюту для получения наличных:", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}\n\n💰 <b>Выберите валюту для получения наличных:</b>",
+            parseMode: Telegram.Bot.Types.Enums.ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

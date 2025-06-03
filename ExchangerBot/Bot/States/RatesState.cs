@@ -9,6 +9,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types;
 using Telegram.Bot;
 using System.Xml.Linq;
+using ExchangerBot.Bot.Resources;
 
 namespace ExchangerBot.Bot.States;
 
@@ -32,10 +33,10 @@ internal class RatesState : IBotState
 
         foreach (string name in Enum.GetNames(typeof(TakeCurrency)))
             if (name != "Unknown")
-                buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"💵 {name}", $"rates_{name}")]);
+                buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"{SmileDictionary.CurrencyFlags[name]} {name}", $"rates_{name}")]);
 
         buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"💵 Все", $"rates_all")]);
 
-        await bot.EditMessageText(chatId, messageId, "Выберите, что хотели бы обменять или посмотрите все доступные курсы.", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.EditMessageText(chatId, messageId, "💱 Добро пожаловать в наш обменный пункт!\r\n\r\n🔍 Выберите валюту, которую хотите обменять,  \r\nили просмотрите 🔓 *все доступные курсы* 👇", replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }
