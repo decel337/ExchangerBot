@@ -185,7 +185,13 @@ internal class BotService
                 _stateManager.SetOrder(query.Message.Chat.Id, order3);
                 _stateManager.SetState(query.Message.Chat.Id, new States.ExchangeStates.AtmStates.PlatformEnterAmountState());
                 break;
-
+            case string countryCurrency when countryCurrency.StartsWith("select_country"):
+                order3 = _stateManager.GetOrder(query.Message.Chat.Id);
+                _ = Enum.TryParse(countryCurrency.Split(':')[1], out Currency giveCurrency);
+                order3.Currency = giveCurrency;
+                _stateManager.SetOrder(query.Message.Chat.Id, order3);
+                _stateManager.SetState(query.Message.Chat.Id, new States.ExchangeStates.AtmStates.ConfirmationState());
+                break;
             //Handle for manager callback
             case string operation when operation.StartsWith("take_"):
                 string orderId = operation.Split('_')[1];

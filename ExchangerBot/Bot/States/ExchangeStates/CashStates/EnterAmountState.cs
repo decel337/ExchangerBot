@@ -33,7 +33,7 @@ internal class EnterAmountState : IFormBotState
 
         foreach (string name in Enum.GetNames(typeof(Currency)))
         {
-            if (name == "Unknown") 
+            if (name == "Unknown" || name == order.TakeCurrency.ToString()) 
                 continue;
 
             buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"{SmileDictionary.CurrencyFlags[name]} {name}", $"select_currency2:{name}")]);

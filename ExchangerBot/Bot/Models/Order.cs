@@ -115,7 +115,7 @@ internal class OrderForATM(int numberOfOrder) : IOrder //for nal
     public int NumberOfOrder { get; init; } = numberOfOrder;
     public int Amount { get; set; } = 0;
     public TakeCurrency TakeCurrency { get; set; } = TakeCurrency.Unknown;
-    public Currency Currency { get; set; } = Currency.IDR;
+    public Currency Currency { get; set; } = Currency.Unknown;
     public PaymentMethod Method { get; set; } = PaymentMethod.ATM;
     public string NameOfBank { get; set; } = "Unknown";
     public string From { get; set; } = string.Empty;

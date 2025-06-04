@@ -11,6 +11,17 @@ namespace ExchangerBot.Bot.States;
 
 internal class RatesSelectorState(TakeCurrency? currency = null) : IBotState
 {
+    Dictionary<string, int> _interpolateSumOfDefaultRate = new Dictionary<string, int>()
+    {
+        {"IDR", 10000000 },
+        {"THB", 50000 },
+        {"USD", 1000 },
+        {"EUR", 1000 },
+        {"AUD", 1000 },
+        {"RUB", 100000 },
+        {"UAH", 50000 },
+        {"USDT", 1000 }
+    };
     public async Task Handle(ITelegramBotClient bot, Message message, StateManager stateManager)
     {
         long chatId = message.Chat.Id;
@@ -52,7 +63,7 @@ internal class RatesSelectorState(TakeCurrency? currency = null) : IBotState
                 string? rate = rates.ToList().FirstOrDefault(x => x[0] == take && x[1] == value)?[2];
                 if (rate != null)
                 {
-                    messageForUser += $"• 1000 {take} {SmileDictionary.CurrencyFlags[take]} = {Math.Round(double.Parse(rate, NumberStyles.Any, new CultureInfo("ru-RU")) * 1000 * 0.97, 2).ToString("N2", customFormat)} {value} {SmileDictionary.CurrencyFlags[value]}\n";
+                    messageForUser += $"• {_interpolateSumOfDefaultRate[take].ToString("N0", customFormat)} {take} {SmileDictionary.CurrencyFlags[take]} = {Math.Round(double.Parse(rate, NumberStyles.Any, new CultureInfo("ru-RU")) * _interpolateSumOfDefaultRate[take] * 0.97, 2).ToString("N2", customFormat)} {value} {SmileDictionary.CurrencyFlags[value]}\n";
                 }
                 else
                 {

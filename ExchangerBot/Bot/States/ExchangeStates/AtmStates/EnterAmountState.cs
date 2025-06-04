@@ -30,16 +30,12 @@ internal class EnterAmountState : IFormBotState
 
         stateManager.SetOrder(chatId, order);
 
-
-        buttons =
+        buttons = 
             [
-                [InlineKeyboardButton.WithCallbackData("✅ Confirm", "confirm")],
-                [InlineKeyboardButton.WithCallbackData("⬅️ Главное меню", "back")]
+              [InlineKeyboardButton.WithCallbackData("📍 Индонезия", $"select_country:{Currency.IDR}")],
+              [InlineKeyboardButton.WithCallbackData("📍 Таиланд", $"select_country:{Currency.THB}")],
+              [InlineKeyboardButton.WithCallbackData("⬅️ Главное меню", "back")]
             ];
-
-        order = stateManager.GetOrder(chatId);
-        order.MayCalc = true;
-        stateManager.SetOrder(chatId, order);
 
         await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}", replyMarkup: new InlineKeyboardMarkup(buttons));
     }

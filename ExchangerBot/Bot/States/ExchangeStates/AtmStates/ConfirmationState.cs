@@ -1,0 +1,30 @@
+﻿using ExchangerBot.Bot.Models;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
+
+namespace ExchangerBot.Bot.States.ExchangeStates.AtmStates;
+
+internal class ConfirmationState : IFormBotState
+{
+    public async Task Handle(ITelegramBotClient bot, Message message, StateManager stateManager)
+    {
+        long chatId = message.Chat.Id;
+        int messageId = message.MessageId;
+
+        List<List<InlineKeyboardButton>> buttons =
+            [
+                [InlineKeyboardButton.WithCallbackData("✅ Confirm", "confirm")],
+                [InlineKeyboardButton.WithCallbackData("⬅️ Главное меню", "back")]
+            ];
+
+        IOrder order = stateManager.GetOrder(chatId);
+
+        order.MayCalc = true;
+        stateManager.SetOrder(chatId, order);
+
+        await bot.EditMessageText(chatId, stateManager.GetGeneralMessageId(chatId), $"{order}", replyMarkup: new InlineKeyboardMarkup(buttons));
+        stateManager.SetState(chatId, new EnterAmountState());
+    }
+}
