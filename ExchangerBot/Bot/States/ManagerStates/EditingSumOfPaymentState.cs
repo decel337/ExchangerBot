@@ -35,13 +35,13 @@ internal class EditingSumOfPaymentState : IFormBotState
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
 [
     [
-                            InlineKeyboardButton.WithCallbackData("✏ Change sum", $"edit_{_orderId}"),
+                            InlineKeyboardButton.WithCallbackData("✏ Изменить сумму к выдаче", $"edit_{_orderId}"),
                         ],
                         [
-                            InlineKeyboardButton.WithCallbackData("✅ Confirm", $"send_{_orderId}")
+                            InlineKeyboardButton.WithCallbackData("✅ Завершить заказ", $"send_{_orderId}")
                         ],
                         [
-                            InlineKeyboardButton.WithCallbackData("❌ Cancel", $"cancel_{_orderId}")
+                            InlineKeyboardButton.WithCallbackData("❌ Отменить заказ", $"cancel_{_orderId}")
                         ]
 ]);
         await bot.SendMessage(chatId, order.ToString()!, replyMarkup: inlineKeyboard);

@@ -34,10 +34,10 @@ internal class UserService(IUserRepository userRepository, ITelegramBotClient bo
             InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton.WithCallbackData("✅ Take", $"take_{orderId}")
+                    InlineKeyboardButton.WithCallbackData("✅ Взять заказ в работу", $"take_{orderId}")
                 ],
                 [
-                    InlineKeyboardButton.WithCallbackData("❌ Cancel", $"cancel_{orderId}")
+                    InlineKeyboardButton.WithCallbackData("❌ Отменить заказ", $"cancel_{orderId}")
                 ]
             ]);
 

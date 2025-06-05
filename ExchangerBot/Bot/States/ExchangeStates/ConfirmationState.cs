@@ -14,7 +14,7 @@ internal class ConfirmationState : IBotState
 
         List<List<InlineKeyboardButton>> buttons =
             [
-                [InlineKeyboardButton.WithCallbackData("✅ Confirm", "confirm")],
+                [InlineKeyboardButton.WithCallbackData("✅ Подтвердить заказ", "confirm")],
                 [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
             ];
 

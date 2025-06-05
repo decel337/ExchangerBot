@@ -22,6 +22,9 @@
     <None Update="Bot\count.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Bot\Resources\Preview.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="excelaccess.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

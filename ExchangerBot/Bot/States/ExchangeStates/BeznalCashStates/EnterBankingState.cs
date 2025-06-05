@@ -15,7 +15,7 @@ internal class EnterBankingState : IFormBotState
 
         List<List<InlineKeyboardButton>> buttons =
             [
-                [InlineKeyboardButton.WithCallbackData("✅ Confirm", "confirm1")],
+                [InlineKeyboardButton.WithCallbackData("✅ Подтвердить заказ", "confirm1")],
                 [InlineKeyboardButton.WithCallbackData("⬅️ Назад", "back")]
             ];
 

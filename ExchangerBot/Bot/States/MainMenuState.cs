@@ -48,6 +48,8 @@ internal class MainMenuState : IBotState
         //    await bot.DeleteMessage(chatId, messageId - 1);
         //}
         //catch{ }
+        await bot.SendPhoto(chatId, new InputFileStream(File.OpenRead("Bot/Resources/Preview.png")));
+
         Message responseMessage = await bot.SendMessage(chatId, $"👋 Привет, {message?.From?.FirstName}!\r\n\r\nДобро пожаловать в 💱 ExchangerBot — твой персональный помощник по обмену валют!\r\n\r\n🚀 Здесь ты сможешь:\r\n• Обменять валюту по лучшему курсу 🔁  \r\n• Оплатить счета без лишней суеты 💳  \r\n• Отследить курс в реальном времени 📈\r\n\r\n👇 <b>Выберите, что вас интересует:</b>", 
             parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,replyMarkup: buttons);
         stateManager.SetGeneralMessageId(chatId, responseMessage.Id);

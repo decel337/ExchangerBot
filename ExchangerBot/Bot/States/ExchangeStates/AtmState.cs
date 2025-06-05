@@ -26,7 +26,7 @@ internal class AtmState : IBotState
 
         foreach (string name in Enum.GetNames(typeof(TakeCurrency)))
         {
-            if (name == "Unknown" || name == "USDT")
+            if (name == "Unknown")
                 continue;
             buttons.Insert(0, [InlineKeyboardButton.WithCallbackData($"{SmileDictionary.CurrencyFlags[name]} {name}", $"select_take_currency2:{name}")]);
         }

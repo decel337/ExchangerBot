@@ -3,12 +3,12 @@
 public enum TakeCurrency
 {
     USDT,
-    UAH,
-    RUB,
     AUD,
     EUR,
     USD,
     THB,
     IDR,
+    UAH,
+    RUB,
     Unknown
 }
